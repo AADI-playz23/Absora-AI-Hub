@@ -123,7 +123,7 @@ export function ModelDetail({ model, user, token, onBack, onAuthRequired }) {
       {session?.status === 'ACTIVE' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           <SessionPanel session={session} model={model} />
-          <PlaygroundChat tunnelUrl={session.tunnel_url} modelId={model.id} />
+          <PlaygroundChat session={session} modelId={model.id} />
         </div>
       )}
 

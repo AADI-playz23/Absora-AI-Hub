@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// In-Memory & File Persistence Store for Vercel Serverless execution
+// In-Memory & Persistence Store for Vercel Serverless execution
 let globalState = {
   colab_status: 'IDLE',
   tunnel_url: null,
@@ -18,7 +18,7 @@ let globalState = {
   users: []
 };
 
-// Secret key for JWT
+// Secret key for JWT & API Key signing
 const JWT_SECRET = process.env.JWT_SECRET || 'absora-vercel-jwt-secret-2026';
 
 function hashPassword(pass) {
@@ -52,7 +52,18 @@ function authMiddleware(req, res, next) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  const payload = verifyToken(authHeader.split(' ')[1]);
+  const token = authHeader.split(' ')[1];
+  
+  // Accept both JWT tokens and platform API keys (sk-absora-...)
+  if (token.startsWith('sk-absora-')) {
+    const session = globalState.sessions.find(s => s.api_key === token && s.status === 'ACTIVE');
+    if (!session) return res.status(401).json({ error: 'Invalid or expired API Key' });
+    req.user = { userId: session.user_id };
+    req.session = session;
+    return next();
+  }
+
+  const payload = verifyToken(token);
   if (!payload) return res.status(401).json({ error: 'Invalid token' });
   req.user = payload;
   next();
@@ -106,7 +117,6 @@ app.get('/api/models', (req, res) => {
 app.get('/api/models/status', (req, res) => {
   res.json({
     colab_status: globalState.colab_status,
-    tunnel_url: globalState.tunnel_url,
     vram_used_gb: globalState.vram_used_gb,
     vram_free_gb: globalState.vram_free_gb,
     loaded_models: globalState.loaded_models
@@ -120,17 +130,21 @@ app.post('/api/sessions/request', authMiddleware, (req, res) => {
   if (!targetModel) return res.status(404).json({ error: 'Model not found' });
 
   const sessionId = 'ses_' + crypto.randomBytes(4).toString('hex');
+  const apiKey = 'sk-absora-' + crypto.randomBytes(12).toString('hex');
   const colabLink = `https://colab.research.google.com/github/AADI-playz23/Absora-AI-Hub/blob/main/notebooks/vllm_orchestrator.ipynb`;
 
-  // Active tunnel exists
+  const host = req.headers.host || 'absora.vercel.app';
+  const proxyEndpoint = `https://${host}/api/v1/chat/completions`;
+
+  // Active worker exists
   if (globalState.colab_status === 'ACTIVE' && globalState.tunnel_url) {
-    const isLoaded = globalState.loaded_models.some(m => m.model_id === model_id);
     const session = {
       id: sessionId,
       user_id: req.user.userId,
       model_id,
       status: 'ACTIVE',
-      tunnel_url: globalState.tunnel_url,
+      api_key: apiKey,
+      proxy_endpoint: proxyEndpoint,
       expires_at: Math.floor(Date.now() / 1000) + 7200
     };
     globalState.sessions.push(session);
@@ -139,9 +153,10 @@ app.post('/api/sessions/request', authMiddleware, (req, res) => {
       session_id: sessionId,
       status: 'ACTIVE',
       model_id,
-      tunnel_url: globalState.tunnel_url,
+      api_key: apiKey,
+      proxy_endpoint: proxyEndpoint,
       colab_url: colabLink,
-      message: 'Joined active endpoint session!'
+      message: 'Joined active endpoint session! Use your Absora API Key with the platform endpoint.'
     });
   }
 
@@ -152,6 +167,8 @@ app.post('/api/sessions/request', authMiddleware, (req, res) => {
     user_id: req.user.userId,
     model_id,
     status: 'STARTING',
+    api_key: apiKey,
+    proxy_endpoint: proxyEndpoint,
     colab_url: colabLink
   };
   globalState.sessions.push(session);
@@ -161,22 +178,59 @@ app.post('/api/sessions/request', authMiddleware, (req, res) => {
     session_id: sessionId,
     status: 'STARTING',
     model_id,
+    api_key: apiKey,
+    proxy_endpoint: proxyEndpoint,
     colab_url: colabLink,
-    message: 'Colab worker starting. Click "Open in Colab" to run the one-click single-cell worker.'
+    message: 'Colab worker starting. Click "Open in Colab" to run the one-click worker.'
   });
 });
 
 app.get('/api/sessions/mine', authMiddleware, (req, res) => {
   const now = Math.floor(Date.now() / 1000);
+  const host = req.headers.host || 'absora.vercel.app';
+  const proxyEndpoint = `https://${host}/api/v1/chat/completions`;
+
   const userSessions = globalState.sessions
     .filter(s => s.user_id === req.user.userId)
     .map(s => ({
       ...s,
-      tunnel_url: s.status === 'ACTIVE' ? globalState.tunnel_url : null,
+      proxy_endpoint: proxyEndpoint,
       seconds_remaining: s.expires_at ? Math.max(0, s.expires_at - now) : null
     }));
 
   res.json({ sessions: userSessions, colab_status: globalState.colab_status });
+});
+
+// ── OPENAI-COMPATIBLE HIDDEN BACKEND PROXY (NVIDIA NIM / OPENROUTER STYLE) ──
+app.post('/api/v1/chat/completions', authMiddleware, async (req, res) => {
+  if (!globalState.tunnel_url || globalState.colab_status !== 'ACTIVE') {
+    return res.status(503).json({ error: 'No active AI worker is currently running on backend.' });
+  }
+
+  const hiddenBackendUrl = `${globalState.tunnel_url}/v1/chat/completions`;
+
+  try {
+    const fetchRes = await fetch(hiddenBackendUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(req.body)
+    });
+
+    res.status(fetchRes.status);
+    for (const [key, value] of fetchRes.headers.entries()) {
+      if (key.toLowerCase() !== 'content-encoding') {
+        res.setHeader(key, value);
+      }
+    }
+
+    const data = await fetchRes.arrayBuffer();
+    res.send(Buffer.from(data));
+  } catch (err) {
+    console.error('Hidden backend proxy error:', err);
+    res.status(502).json({ error: 'Backend proxy error communicating with hidden AI worker.' });
+  }
 });
 
 // Webhooks from Colab
@@ -197,12 +251,11 @@ app.post('/api/webhook/tunnel', (req, res) => {
   globalState.sessions.forEach(s => {
     if (s.status === 'STARTING') {
       s.status = 'ACTIVE';
-      s.tunnel_url = tunnel_url;
       s.expires_at = now + 7200;
     }
   });
 
-  res.json({ success: true, message: 'Tunnel registered on Vercel API Serverless gateway!' });
+  res.json({ success: true, message: 'Tunnel registered on hidden backend gateway!' });
 });
 
 app.post('/api/webhook/status', (req, res) => {

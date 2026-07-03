@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { Send, Bot, User, Loader2, Sparkles } from 'lucide-react';
 
-export function PlaygroundChat({ tunnelUrl, modelId }) {
+export function PlaygroundChat({ session, modelId }) {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: `Hello! I am ${modelId} running live on Absora's Colab T4 GPU compute cluster via vLLM. Send me any prompt!` }
+    { role: 'assistant', content: `Hello! I am ${modelId} running live via Absora's unified API proxy. Send me any prompt!` }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const proxyEndpoint = session?.proxy_endpoint || '/api/v1/chat/completions';
+  const apiKey = session?.api_key;
+
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() || loading || !tunnelUrl) return;
+    if (!input.trim() || loading) return;
 
     const userMsg = { role: 'user', content: input.trim() };
     const newMessages = [...messages, userMsg];
@@ -19,9 +22,14 @@ export function PlaygroundChat({ tunnelUrl, modelId }) {
     setLoading(true);
 
     try {
-      const res = await fetch(`${tunnelUrl}/v1/chat/completions`, {
+      const headers = { 'Content-Type': 'application/json' };
+      if (apiKey) {
+        headers['Authorization'] = `Bearer ${apiKey}`;
+      }
+
+      const res = await fetch(proxyEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           model: modelId,
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
@@ -38,7 +46,7 @@ export function PlaygroundChat({ tunnelUrl, modelId }) {
       const botResponse = data.choices?.[0]?.message?.content || 'No response content received.';
       setMessages([...newMessages, { role: 'assistant', content: botResponse }]);
     } catch (err) {
-      setMessages([...newMessages, { role: 'assistant', content: `[Error calling live model]: ${err.message}` }]);
+      setMessages([...newMessages, { role: 'assistant', content: `[Error calling model]: ${err.message}` }]);
     } finally {
       setLoading(false);
     }
@@ -49,10 +57,10 @@ export function PlaygroundChat({ tunnelUrl, modelId }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '12px' }}>
         <Sparkles size={18} style={{ color: '#06b6d4' }} />
         <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-          Interactive Model Playground
+          Interactive Model Playground (NVIDIA NIM / OpenRouter Style)
         </h4>
         <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '12px', background: 'rgba(6, 182, 212, 0.15)', color: '#38bdf8', fontWeight: 600 }}>
-          OpenAI API Compatible
+          Proxied & Hidden Backend
         </span>
       </div>
 
@@ -95,7 +103,7 @@ export function PlaygroundChat({ tunnelUrl, modelId }) {
         ))}
         {loading && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-            <Loader2 size={16} className="animate-spin" /> Generating response on Colab T4...
+            <Loader2 size={16} className="animate-spin" /> Generating response via platform proxy...
           </div>
         )}
       </div>
@@ -104,8 +112,8 @@ export function PlaygroundChat({ tunnelUrl, modelId }) {
       <form onSubmit={handleSend} style={{ display: 'flex', gap: '10px', marginTop: '16px', borderTop: '1px solid var(--border-glass)', paddingTop: '16px' }}>
         <input
           type="text"
-          placeholder={tunnelUrl ? "Type a prompt to test your live model..." : "Waiting for active tunnel endpoint..."}
-          disabled={!tunnelUrl || loading}
+          placeholder="Type a prompt to test your model..."
+          disabled={loading}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           style={{
@@ -119,7 +127,7 @@ export function PlaygroundChat({ tunnelUrl, modelId }) {
             fontSize: '0.9rem'
           }}
         />
-        <button type="submit" disabled={!tunnelUrl || loading || !input.trim()} className="btn-primary">
+        <button type="submit" disabled={loading || !input.trim()} className="btn-primary">
           <Send size={16} />
         </button>
       </form>
