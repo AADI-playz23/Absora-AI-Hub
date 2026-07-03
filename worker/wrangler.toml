@@ -1,0 +1,15 @@
+name = "absora-ai-hub"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+account_id = "cd3a059ca84031a0ec09ec558869a588"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "absora-db"
+database_id = "ad8b5464-07df-42d1-8860-130a4c533cb9"
+
+[vars]
+GITHUB_REPO = "Absora-AI-Hub"
+GITHUB_OWNER = "your-github-username"
+JWT_SECRET = "absora-secret-key-change-in-production"
+
