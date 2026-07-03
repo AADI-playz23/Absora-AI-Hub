@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 export async function fetchCatalog() {
   const res = await fetch(`${API_BASE}/models`);

@@ -136,12 +136,21 @@ export function ModelDetail({ model, user, token, onBack, onAuthRequired }) {
       {(session?.status === 'STARTING' || session?.status === 'LOADING') && (
         <div className="glass-panel" style={{ padding: '32px', textAlign: 'center' }}>
           <Loader2 size={36} className="animate-spin" style={{ color: '#06b6d4', margin: '0 auto 16px' }} />
-          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
-            Launching Colab T4 Worker via GitHub Actions...
+          <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+            Worker Ready to Run on Colab T4
           </h3>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto' }}>
-            The runner is booting the single-cell Colab worker, configuring cloudflared, and starting vLLM for {model.name}. Endpoint will activate automatically!
+          <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', maxWidth: '560px', margin: '0 auto 20px', lineHeight: '1.6' }}>
+            Click the button below to open the single-cell worker directly in Colab. No account credentials or setup required! Run the cell once to activate your live endpoint.
           </p>
+          <a
+            href={session.colab_url || "https://colab.research.google.com/github/AADI-playz23/Absora-AI-Hub/blob/main/notebooks/vllm_orchestrator.ipynb"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary"
+            style={{ padding: '12px 24px', fontSize: '1rem', textDecoration: 'none', display: 'inline-flex', gap: '8px' }}
+          >
+            <Zap size={18} /> Open & Run Worker in Google Colab (One Click)
+          </a>
         </div>
       )}
 
