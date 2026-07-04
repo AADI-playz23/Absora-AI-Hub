@@ -2,14 +2,10 @@ import React from 'react';
 import { Cpu, Zap } from 'lucide-react';
 
 export function VramDashboard({ vram, colabStatus, loadedModels = [] }) {
-  const total = 30.0;
-  const used = Math.min(total, vram?.used || (loadedModels.length * 14.0));
+  const total = 16.0;
+  const used = Math.min(total, vram?.used || (loadedModels.reduce((acc, m) => acc + (m.vram_gb || 7.5), 0)));
   const free = Math.max(0, total - used);
   const usedPct = ((used / total) * 100).toFixed(1);
-
-  // Split loaded models by GPU slot (GPU 0 & GPU 1)
-  const gpu0Model = loadedModels.find(m => m.gpu_index === 0 || loadedModels.indexOf(m) === 0);
-  const gpu1Model = loadedModels.find(m => m.gpu_index === 1 || loadedModels.indexOf(m) === 1);
 
   return (
     <div className="glass-panel" style={{ padding: '20px 24px', marginBottom: '32px' }}>
@@ -20,10 +16,10 @@ export function VramDashboard({ vram, colabStatus, loadedModels = [] }) {
           </div>
           <div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Dual-GPU Inference Cluster (30 GB VRAM Pool)
+              Dual Parallel GPU Inference Cluster (16 GB VRAM Pool)
             </div>
             <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              GPU VRAM & Physical Slot Allocation
+              Shared VRAM & Concurrent Model Memory
               <span className={`badge-status ${colabStatus === 'ACTIVE' ? 'badge-active' : colabStatus === 'STARTING' ? 'badge-loading' : 'badge-idle'}`}>
                 <span className="pulse-dot"></span> {colabStatus}
               </span>
@@ -47,63 +43,32 @@ export function VramDashboard({ vram, colabStatus, loadedModels = [] }) {
         </div>
       </div>
 
-      {/* Dual Physical GPU Cards Display */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
-        
-        {/* GPU 0 */}
-        <div style={{
-          background: 'rgba(10, 15, 26, 0.7)',
-          border: '1px solid var(--border-glass)',
-          borderRadius: '10px',
-          padding: '14px'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            <span>GPU Slot 0 (15 GB)</span>
-            <span style={{ color: gpu0Model ? '#a78bfa' : '#34d399' }}>
-              {gpu0Model ? `${gpu0Model.model_id} (14 GB)` : '15 GB Free'}
-            </span>
-          </div>
-
-          <div style={{ width: '100%', height: '10px', background: 'rgba(15, 23, 42, 0.9)', borderRadius: '5px', overflow: 'hidden', border: '1px solid var(--border-glass)' }}>
-            <div style={{
-              width: gpu0Model ? '93%' : '0%',
-              height: '100%',
-              background: 'linear-gradient(90deg, #7c3aed, #06b6d4)',
-              transition: 'width 0.4s ease'
-            }} />
-          </div>
-        </div>
-
-        {/* GPU 1 */}
-        <div style={{
-          background: 'rgba(10, 15, 26, 0.7)',
-          border: '1px solid var(--border-glass)',
-          borderRadius: '10px',
-          padding: '14px'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            <span>GPU Slot 1 (15 GB)</span>
-            <span style={{ color: gpu1Model ? '#a78bfa' : '#34d399' }}>
-              {gpu1Model ? `${gpu1Model.model_id} (14 GB)` : '15 GB Free'}
-            </span>
-          </div>
-
-          <div style={{ width: '100%', height: '10px', background: 'rgba(15, 23, 42, 0.9)', borderRadius: '5px', overflow: 'hidden', border: '1px solid var(--border-glass)' }}>
-            <div style={{
-              width: gpu1Model ? '93%' : '0%',
-              height: '100%',
-              background: 'linear-gradient(90deg, #06b6d4, #10b981)',
-              transition: 'width 0.4s ease'
-            }} />
-          </div>
-        </div>
-
+      {/* Visual VRAM Progress Bar */}
+      <div style={{ width: '100%', height: '14px', background: 'rgba(15, 23, 42, 0.8)', borderRadius: '7px', overflow: 'hidden', display: 'flex', border: '1px solid var(--border-glass)' }}>
+        {loadedModels.map((m, idx) => {
+          const mPct = (((m.vram_gb || 7.5) / total) * 100).toFixed(1);
+          const colors = ['#7c3aed', '#06b6d4', '#10b981'];
+          const color = colors[idx % colors.length];
+          return (
+            <div
+              key={m.model_id || idx}
+              title={`${m.model_id}: ${m.vram_gb || 7.5} GB`}
+              style={{
+                width: `${mPct}%`,
+                height: '100%',
+                background: color,
+                transition: 'width 0.4s ease',
+                boxShadow: `0 0 10px ${color}`
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Active Model Chips */}
       <div style={{ display: 'flex', gap: '10px', marginTop: '16px', flexWrap: 'wrap' }}>
         {loadedModels.length === 0 ? (
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>No models currently loaded. Click 'Launch Session' to spin up GPU hardware.</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>No models currently loaded. Click 'Launch Session' to spin up parallel GPU engine.</span>
         ) : (
           loadedModels.map((m, idx) => (
             <div key={m.model_id || idx} style={{
@@ -119,7 +84,7 @@ export function VramDashboard({ vram, colabStatus, loadedModels = [] }) {
             }}>
               <Zap size={13} style={{ color: '#06b6d4' }} />
               <span>{m.model_id}</span>
-              <span style={{ opacity: 0.6 }}>(GPU {m.gpu_index ?? idx} — {m.vram_gb || 14.0} GB)</span>
+              <span style={{ opacity: 0.6 }}>(Parallel Slot {idx + 1} — {m.vram_gb || 7.5} GB)</span>
             </div>
           ))
         )}

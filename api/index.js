@@ -12,21 +12,11 @@ const catalogModels = [
     id: "qwen2.5-7b",
     name: "Qwen 2.5 7B Instruct",
     hf_id: "Qwen/Qwen2.5-7B-Instruct",
-    vram_gb: 14.0,
+    vram_gb: 8.0,
     context: "32768",
     category: "SLM",
-    badge: "Popular 7B",
-    description: "Alibaba Cloud's flagship 7B parameter model with superior general reasoning, coding, and instruction following."
-  },
-  {
-    id: "deepseek-r1-7b",
-    name: "DeepSeek R1 Distill 7B",
-    hf_id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
-    vram_gb: 14.0,
-    context: "32768",
-    category: "Reasoning",
-    badge: "Reasoning 7B",
-    description: "DeepSeek R1 reasoning capabilities distilled into a 7B model featuring step-by-step chain-of-thought processing."
+    badge: "Primary 7B",
+    description: "Alibaba Cloud's flagship 7B parameter model running in parallel."
   },
   {
     id: "phi3.5-mini",
@@ -36,7 +26,7 @@ const catalogModels = [
     context: "128000",
     category: "SLM",
     badge: "128K Ctx",
-    description: "Microsoft's 3.8B parameter model featuring a massive 128K token context window and strong reasoning efficiency."
+    description: "Microsoft's 3.8B parameter model featuring a 128K context window running in parallel."
   }
 ];
 
@@ -45,7 +35,7 @@ let globalState = {
   colab_status: 'IDLE',
   tunnel_url: null,
   vram_used_gb: 0.0,
-  vram_free_gb: 30.0,
+  vram_free_gb: 16.0,
   loaded_models: [],
   sessions: [],
   users: []

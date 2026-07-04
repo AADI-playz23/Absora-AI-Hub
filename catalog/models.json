@@ -1,73 +1,13 @@
 [
   {
-    "id": "tinyllama-1.1b",
-    "name": "TinyLlama 1.1B Chat",
-    "hf_id": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-    "vram_gb": 2.0,
-    "context": "2048",
-    "category": "SLM",
-    "badge": "Ultra Fast",
-    "description": "Compact 1.1B parameter model optimized for speed, low memory footprint, and quick responses."
-  },
-  {
-    "id": "smollm2-1.7b",
-    "name": "SmolLM2 1.7B Instruct",
-    "hf_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
-    "vram_gb": 3.0,
-    "context": "8192",
-    "category": "SLM",
-    "badge": "Compact",
-    "description": "High-efficiency state-of-the-art small language model trained on curated synthetic data."
-  },
-  {
-    "id": "qwen2.5-0.5b",
-    "name": "Qwen 2.5 0.5B Instruct",
-    "hf_id": "Qwen/Qwen2.5-0.5B-Instruct",
-    "vram_gb": 1.5,
+    "id": "qwen2.5-7b",
+    "name": "Qwen 2.5 7B Instruct",
+    "hf_id": "Qwen/Qwen2.5-7B-Instruct",
+    "vram_gb": 8.0,
     "context": "32768",
     "category": "SLM",
-    "badge": "Tiny",
-    "description": "Alibaba Cloud's ultra-lightweight model with massive 32K context length."
-  },
-  {
-    "id": "qwen2.5-1.5b",
-    "name": "Qwen 2.5 1.5B Instruct",
-    "hf_id": "Qwen/Qwen2.5-1.5B-Instruct",
-    "vram_gb": 3.0,
-    "context": "32768",
-    "category": "SLM",
-    "badge": "Popular",
-    "description": "Exceptional general reasoning, coding, and multilingual performance for its size."
-  },
-  {
-    "id": "qwen2.5-3b",
-    "name": "Qwen 2.5 3B Instruct",
-    "hf_id": "Qwen/Qwen2.5-3B-Instruct",
-    "vram_gb": 5.5,
-    "context": "32768",
-    "category": "SLM",
-    "badge": "Balanced",
-    "description": "Near 7B class intelligence with half the memory footprint."
-  },
-  {
-    "id": "gemma3-1b",
-    "name": "Gemma 3 1B IT",
-    "hf_id": "google/gemma-3-1b-it",
-    "vram_gb": 2.5,
-    "context": "32768",
-    "category": "SLM",
-    "badge": "Google",
-    "description": "Google's lightweight model built from Gemini technology for instruction following."
-  },
-  {
-    "id": "gemma2-2b",
-    "name": "Gemma 2 2B IT",
-    "hf_id": "google/gemma-2-2b-it",
-    "vram_gb": 4.5,
-    "context": "8192",
-    "category": "SLM",
-    "badge": "Google",
-    "description": "Punches far above its weight class in benchmarks and natural conversational flow."
+    "badge": "Primary 7B",
+    "description": "Alibaba Cloud's flagship 7B parameter model optimized for dual-model parallel GPU hosting."
   },
   {
     "id": "phi3.5-mini",
@@ -77,26 +17,6 @@
     "context": "128000",
     "category": "SLM",
     "badge": "128K Ctx",
-    "description": "Microsoft's 3.8B parameter model featuring a 128K token context window and strong reasoning."
-  },
-  {
-    "id": "deepseek-r1-1.5b",
-    "name": "DeepSeek R1 Distill 1.5B",
-    "hf_id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
-    "vram_gb": 3.0,
-    "context": "32768",
-    "category": "Reasoning",
-    "badge": "Reasoning",
-    "description": "Distilled reasoning model derived from DeepSeek R1 with step-by-step chain of thought."
-  },
-  {
-    "id": "deepseek-r1-7b",
-    "name": "DeepSeek R1 Distill 7B",
-    "hf_id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
-    "vram_gb": 14.0,
-    "context": "32768",
-    "category": "Reasoning",
-    "badge": "Smartest",
-    "description": "DeepSeek R1 reasoning capabilities distilled into a 7B model. Takes full VRAM allocation."
+    "description": "Microsoft's 3.8B parameter model featuring a 128K token context window running in parallel."
   }
 ]

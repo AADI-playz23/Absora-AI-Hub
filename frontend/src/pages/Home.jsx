@@ -8,21 +8,11 @@ const DEFAULT_CATALOG = [
     "id": "qwen2.5-7b",
     "name": "Qwen 2.5 7B Instruct",
     "hf_id": "Qwen/Qwen2.5-7B-Instruct",
-    "vram_gb": 14.0,
+    "vram_gb": 8.0,
     "context": "32768",
     "category": "SLM",
-    "badge": "Popular 7B",
-    "description": "Alibaba Cloud's flagship 7B parameter model with superior general reasoning, coding, and instruction following."
-  },
-  {
-    "id": "deepseek-r1-7b",
-    "name": "DeepSeek R1 Distill 7B",
-    "hf_id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
-    "vram_gb": 14.0,
-    "context": "32768",
-    "category": "Reasoning",
-    "badge": "Reasoning 7B",
-    "description": "DeepSeek R1 reasoning capabilities distilled into a 7B model featuring step-by-step chain-of-thought processing."
+    "badge": "Primary 7B",
+    "description": "Alibaba Cloud's flagship 7B parameter model optimized for dual-model parallel GPU hosting."
   },
   {
     "id": "phi3.5-mini",
@@ -32,7 +22,7 @@ const DEFAULT_CATALOG = [
     "context": "128000",
     "category": "SLM",
     "badge": "128K Ctx",
-    "description": "Microsoft's 3.8B parameter model featuring a massive 128K token context window and strong reasoning efficiency."
+    "description": "Microsoft's 3.8B parameter model featuring a 128K token context window running in parallel."
   }
 ];
 
@@ -53,7 +43,7 @@ export function Home({ sseData, onSelectModel }) {
     return { ...m, status };
   });
 
-  const categories = ['ALL', 'SLM', 'Reasoning'];
+  const categories = ['ALL', 'SLM'];
 
   const filtered = liveModels.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -80,7 +70,7 @@ export function Home({ sseData, onSelectModel }) {
           fontWeight: 700,
           marginBottom: '20px'
         }}>
-          <Sparkles size={14} /> High-Performance GPU Inference Engine
+          <Sparkles size={14} /> Dual-Model Parallel GPU Inference Engine
         </div>
 
         <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: '1.15', marginBottom: '16px' }}>
@@ -91,7 +81,7 @@ export function Home({ sseData, onSelectModel }) {
         </h1>
 
         <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', maxWidth: '680px', margin: '0 auto 36px', lineHeight: '1.6' }}>
-          Deploy and access state-of-the-art open models with high-throughput continuous batching, dual GPU acceleration, and unified API keys.
+          Deploy & access 2 models simultaneously in parallel (Qwen 2.5 7B & Phi 3.5 Mini) with shared VRAM packing, high-throughput continuous batching, and unified API keys.
         </p>
 
         {/* Search & Category Filter */}
