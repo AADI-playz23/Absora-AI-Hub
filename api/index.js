@@ -53,7 +53,7 @@ function authMiddleware(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   const token = authHeader.split(' ')[1];
-  
+
   // Accept both JWT tokens and platform API keys (sk-absora-...)
   if (token.startsWith('sk-absora-')) {
     const session = globalState.sessions.find(s => s.api_key === token && s.status === 'ACTIVE');
@@ -207,20 +207,21 @@ app.post('/api/v1/chat/completions', authMiddleware, async (req, res) => {
     return res.status(503).json({ error: 'No active AI worker is currently running on backend.' });
   }
 
-  const hiddenBackendUrl = `${globalState.tunnel_url}/v1/chat/completions`;
+  const backendUrl = `${globalState.tunnel_url}/v1/chat/completions`;
 
   try {
-    const fetchRes = await fetch(hiddenBackendUrl, {
+    const fetchRes = await fetch(backendUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ABSORA_SECRET_KEY || 'absora-secret-key-2026'
       },
       body: JSON.stringify(req.body)
     });
 
     res.status(fetchRes.status);
     for (const [key, value] of fetchRes.headers.entries()) {
-      if (key.toLowerCase() !== 'content-encoding') {
+      if (key.toLowerCase() !== 'content-encoding' && key.toLowerCase() !== 'content-length') {
         res.setHeader(key, value);
       }
     }
@@ -228,8 +229,31 @@ app.post('/api/v1/chat/completions', authMiddleware, async (req, res) => {
     const data = await fetchRes.arrayBuffer();
     res.send(Buffer.from(data));
   } catch (err) {
-    console.error('Hidden backend proxy error:', err);
-    res.status(502).json({ error: 'Backend proxy error communicating with hidden AI worker.' });
+    console.error('Unified Gateway Proxy Error:', err);
+    res.status(502).json({ error: { message: 'Failed to proxy request to active Kaggle GPU worker.', code: 502 } });
+  }
+});
+
+// Endpoint to unload specific model on worker
+app.post('/api/models/unload', authMiddleware, async (req, res) => {
+  const { model_id } = req.body;
+  if (!globalState.tunnel_url || globalState.colab_status !== 'ACTIVE') {
+    return res.status(503).json({ error: 'No active AI worker currently running' });
+  }
+
+  try {
+    const unloadRes = await fetch(`${globalState.tunnel_url}/unload`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ABSORA_SECRET_KEY || 'absora-secret-key-2026'
+      },
+      body: JSON.stringify({ model_id })
+    });
+    const data = await unloadRes.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Unload request failed: ' + err.message });
   }
 });
 

@@ -28,7 +28,7 @@ export function Dashboard({ user, token, onSelectModel, onAuthRequired }) {
 
   return (
     <div style={{ paddingBottom: '60px' }}>
-      
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
