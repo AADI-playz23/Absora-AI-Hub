@@ -1,15 +1,27 @@
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
+async function safeParseResponse(res, fallbackErrorMsg) {
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error(`Server Error (${res.status}): ${text.slice(0, 100) || fallbackErrorMsg}`);
+  }
+  if (!res.ok) {
+    throw new Error(data.error || fallbackErrorMsg);
+  }
+  return data;
+}
+
 export async function fetchCatalog() {
   const res = await fetch(`${API_BASE}/models`);
-  if (!res.ok) throw new Error('Failed to fetch model catalog');
-  return res.json();
+  return safeParseResponse(res, 'Failed to fetch model catalog');
 }
 
 export async function fetchLiveVram() {
   const res = await fetch(`${API_BASE}/models/status`);
-  if (!res.ok) throw new Error('Failed to fetch VRAM status');
-  return res.json();
+  return safeParseResponse(res, 'Failed to fetch VRAM status');
 }
 
 export async function loginUser(username, password) {
@@ -18,9 +30,7 @@ export async function loginUser(username, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password })
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Login failed');
-  return data;
+  return safeParseResponse(res, 'Login failed');
 }
 
 export async function registerUser(username, email, password) {
@@ -29,9 +39,7 @@ export async function registerUser(username, email, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, email, password })
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Registration failed');
-  return data;
+  return safeParseResponse(res, 'Registration failed');
 }
 
 export async function requestSession(modelId, token) {
@@ -43,9 +51,7 @@ export async function requestSession(modelId, token) {
     },
     body: JSON.stringify({ model_id: modelId })
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Session request failed');
-  return data;
+  return safeParseResponse(res, 'Session request failed');
 }
 
 export async function fetchMySessions(token) {
@@ -54,8 +60,7 @@ export async function fetchMySessions(token) {
       'Authorization': `Bearer ${token}`
     }
   });
-  if (!res.ok) throw new Error('Failed to fetch active sessions');
-  return res.json();
+  return safeParseResponse(res, 'Failed to fetch active sessions');
 }
 
 export async function regenerateApiKey(token) {
@@ -65,7 +70,5 @@ export async function regenerateApiKey(token) {
       'Authorization': `Bearer ${token}`
     }
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to regenerate API key');
-  return data;
+  return safeParseResponse(res, 'Failed to regenerate API key');
 }
