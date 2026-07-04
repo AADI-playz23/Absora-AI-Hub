@@ -47,14 +47,14 @@ export function Home({ sseData, onSelectModel }) {
 
   const filtered = liveModels.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase()) ||
-                          m.description.toLowerCase().includes(search.toLowerCase());
+      m.description.toLowerCase().includes(search.toLowerCase());
     const matchesCat = activeCategory === 'ALL' || m.category === activeCategory;
     return matchesSearch && matchesCat;
   });
 
   return (
     <div style={{ paddingBottom: '60px' }}>
-      
+
       {/* Hero Section */}
       <div style={{ textAlign: 'center', padding: '48px 0 32px' }}>
         <div style={{

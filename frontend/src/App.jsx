@@ -19,7 +19,7 @@ export function App() {
     if (savedUser && token) {
       try {
         setUser(JSON.parse(savedUser));
-      } catch {}
+      } catch { }
     }
   }, [token]);
 

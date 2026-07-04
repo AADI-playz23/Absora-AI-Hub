@@ -9,24 +9,34 @@ app.use(express.json());
 // Inlined Catalog Models (Guarantees zero file resolution / bundle errors on Vercel)
 const catalogModels = [
   {
-    id: "qwen2.5-7b",
-    name: "Qwen 2.5 7B Instruct",
-    hf_id: "Qwen/Qwen2.5-7B-Instruct",
-    vram_gb: 8.0,
-    context: "32768",
-    category: "SLM",
-    badge: "Primary 7B",
-    description: "Alibaba Cloud's flagship 7B parameter model running in parallel."
+    id: "deepseek-r1-1.5b",
+    name: "DeepSeek R1 Distill 1.5B",
+    hf_id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+    vram_gb: 3.0,
+    context: "8192",
+    category: "Reasoning",
+    badge: "R1 Distill",
+    description: "DeepSeek R1 chain-of-thought reasoning model distilled into a compact 1.5B size."
   },
   {
     id: "phi3.5-mini",
     name: "Phi 3.5 Mini Instruct",
     hf_id: "microsoft/Phi-3.5-mini-instruct",
-    vram_gb: 7.0,
+    vram_gb: 7.5,
     context: "128000",
     category: "SLM",
     badge: "128K Ctx",
-    description: "Microsoft's 3.8B parameter model featuring a 128K context window running in parallel."
+    description: "Microsoft's 3.8B parameter model with a 128K token context window."
+  },
+  {
+    id: "qwen2.5-7b",
+    name: "Qwen 2.5 7B Instruct",
+    hf_id: "Qwen/Qwen2.5-7B-Instruct-AWQ",
+    vram_gb: 8.0,
+    context: "32768",
+    category: "SLM",
+    badge: "AWQ 7B",
+    description: "Alibaba Cloud's flagship 7B model in 4-bit AWQ quantization."
   }
 ];
 
@@ -35,7 +45,7 @@ let globalState = {
   colab_status: 'IDLE',
   tunnel_url: null,
   vram_used_gb: 0.0,
-  vram_free_gb: 16.0,
+  vram_free_gb: 32.0,
   loaded_models: [],
   sessions: [],
   users: []
@@ -176,7 +186,7 @@ app.get('/api/models', (req, res) => {
 
   res.json({
     colab_status: globalState.colab_status,
-    vram: { total: 30.0, used: globalState.vram_used_gb, free: globalState.vram_free_gb },
+    vram: { total: 32.0, used: globalState.vram_used_gb, free: globalState.vram_free_gb },
     models
   });
 });
@@ -201,7 +211,7 @@ app.get('/api/sse/status', (req, res) => {
     const data = JSON.stringify({
       timestamp: Date.now(),
       colab_status: globalState.colab_status,
-      vram: { used: globalState.vram_used_gb, free: globalState.vram_free_gb, total: 30.0 },
+      vram: { used: globalState.vram_used_gb, free: globalState.vram_free_gb, total: 32.0 },
       loaded_models: globalState.loaded_models
     });
     res.write(`data: ${data}\n\n`);
@@ -393,11 +403,11 @@ app.post('/api/webhook/tunnel', (req, res) => {
 
   globalState.colab_status = 'ACTIVE';
   globalState.tunnel_url = tunnel_url;
-  globalState.vram_used_gb = 14.0;
-  globalState.vram_free_gb = 16.0;
+  globalState.vram_used_gb = 18.5;
+  globalState.vram_free_gb = 13.5;
 
   if (initial_model_id) {
-    globalState.loaded_models = [{ model_id: initial_model_id, hf_id: 'auto', vram_gb: 14.0, port: 8001 }];
+    globalState.loaded_models = [{ model_id: initial_model_id, hf_id: 'auto', vram_gb: 3.0, port: 8001, gpu: 0 }];
   }
 
   const now = Math.floor(Date.now() / 1000);
@@ -427,7 +437,7 @@ app.post('/api/webhook/stopped', (req, res) => {
   globalState.colab_status = 'IDLE';
   globalState.tunnel_url = null;
   globalState.vram_used_gb = 0;
-  globalState.vram_free_gb = 30.0;
+  globalState.vram_free_gb = 32.0;
   globalState.loaded_models = [];
   res.json({ success: true, message: 'Kaggle cluster marked IDLE.' });
 });

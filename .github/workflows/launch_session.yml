@@ -14,13 +14,9 @@ on:
       hf_id:
         description: 'HuggingFace Model Path'
         required: true
-        default: 'Qwen/Qwen2.5-7B-Instruct'
-      vram_gb:
-        description: 'VRAM requirement in GB'
-        required: true
-        default: '14.0'
+        default: 'Qwen/Qwen2.5-7B-Instruct-AWQ'
       webhook_url:
-        description: 'Vercel / Cloudflare Worker Webhook URL'
+        description: 'Webhook URL'
         required: true
         default: 'https://absora-ai-hub.vercel.app/api/webhook'
 
@@ -43,12 +39,11 @@ jobs:
 
       - name: Launch Kaggle T4x2 GPU Kernel
         env:
-          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'aadiplayz23' }}
-          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY || 'bb278d87c316904717bfc8673419311f' }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
           SESSION_ID: ${{ github.event.inputs.session_id }}
           MODEL_ID: ${{ github.event.inputs.model_id }}
           HF_ID: ${{ github.event.inputs.hf_id }}
-          VRAM_GB: ${{ github.event.inputs.vram_gb }}
           WEBHOOK_URL: ${{ github.event.inputs.webhook_url }}
         run: |
           python scripts/launch_kaggle.py

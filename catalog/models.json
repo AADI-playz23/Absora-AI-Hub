@@ -1,22 +1,35 @@
 [
   {
-    "id": "qwen2.5-7b",
-    "name": "Qwen 2.5 7B Instruct",
-    "hf_id": "Qwen/Qwen2.5-7B-Instruct",
-    "vram_gb": 8.0,
-    "context": "32768",
-    "category": "SLM",
-    "badge": "Primary 7B",
-    "description": "Alibaba Cloud's flagship 7B parameter model optimized for dual-model parallel GPU hosting."
+    "id": "deepseek-r1-1.5b",
+    "name": "DeepSeek R1 Distill 1.5B",
+    "hf_id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+    "vram_gb": 3.0,
+    "context": "8192",
+    "category": "Reasoning",
+    "badge": "R1 Distill",
+    "description": "DeepSeek R1 chain-of-thought reasoning model distilled into a compact 1.5B parameter size. Optimized for logical inference and step-by-step problem solving.",
+    "gpu_slot": 0
   },
   {
     "id": "phi3.5-mini",
     "name": "Phi 3.5 Mini Instruct",
     "hf_id": "microsoft/Phi-3.5-mini-instruct",
-    "vram_gb": 7.0,
+    "vram_gb": 7.5,
     "context": "128000",
     "category": "SLM",
     "badge": "128K Ctx",
-    "description": "Microsoft's 3.8B parameter model featuring a 128K token context window running in parallel."
+    "description": "Microsoft's 3.8B parameter model with an extraordinary 128K token context window. Ideal for long-document analysis and extended conversations.",
+    "gpu_slot": 0
+  },
+  {
+    "id": "qwen2.5-7b",
+    "name": "Qwen 2.5 7B Instruct",
+    "hf_id": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+    "vram_gb": 8.0,
+    "context": "32768",
+    "category": "SLM",
+    "badge": "AWQ 7B",
+    "description": "Alibaba Cloud's flagship 7B model in 4-bit AWQ quantization. Highest quality output among the three with 32K token context and rich instruction-following capability.",
+    "gpu_slot": 1
   }
 ]

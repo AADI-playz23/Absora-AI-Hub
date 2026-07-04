@@ -349,7 +349,7 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="deepseek-r1-7b",
+    model="qwen2.5-7b",  # or: deepseek-r1-1.5b | phi3.5-mini
     messages=[{"role": "user", "content": "Write a Python script for web scraping."}]
 )
 
@@ -408,7 +408,7 @@ print(response.choices[0].message.content)`}
                         Cluster Hardware
                       </div>
                       <div style={{ fontSize: '1rem', fontWeight: 700, color: '#a78bfa' }}>
-                        Dual GPU Acceleration (30GB VRAM)
+                        T4x2 Dual GPU (32 GB VRAM)
                       </div>
                     </div>
                   </div>
