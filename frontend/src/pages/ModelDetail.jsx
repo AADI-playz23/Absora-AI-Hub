@@ -108,7 +108,7 @@ export function ModelDetail({ model, user, token, onBack, onAuthRequired }) {
           </div>
           <div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Execution Backend</div>
-            <div style={{ fontSize: '0.92rem', fontWeight: 600, color: '#34d399' }}>vLLM + Colab T4</div>
+            <div style={{ fontSize: '0.92rem', fontWeight: 600, color: '#34d399' }}>vLLM + Kaggle T4x2 Dual GPU</div>
           </div>
         </div>
       </div>

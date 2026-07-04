@@ -1,14 +1,46 @@
 import React, { useState } from 'react';
-import { Search, Sparkles, Server, Zap } from 'lucide-react';
+import { Search, Sparkles, Server, Cpu } from 'lucide-react';
 import { VramDashboard } from '../components/VramDashboard.jsx';
 import { ModelCard } from '../components/ModelCard.jsx';
-import catalogModels from '../../../catalog/models.json';
+
+const DEFAULT_CATALOG = [
+  {
+    "id": "qwen2.5-7b",
+    "name": "Qwen 2.5 7B Instruct",
+    "hf_id": "Qwen/Qwen2.5-7B-Instruct",
+    "vram_gb": 14.0,
+    "context": "32768",
+    "category": "SLM",
+    "badge": "Popular 7B",
+    "description": "Alibaba Cloud's flagship 7B parameter model with superior general reasoning, coding, and instruction following."
+  },
+  {
+    "id": "deepseek-r1-7b",
+    "name": "DeepSeek R1 Distill 7B",
+    "hf_id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+    "vram_gb": 14.0,
+    "context": "32768",
+    "category": "Reasoning",
+    "badge": "Reasoning 7B",
+    "description": "DeepSeek R1 reasoning capabilities distilled into a 7B model featuring step-by-step chain-of-thought processing."
+  },
+  {
+    "id": "phi3.5-mini",
+    "name": "Phi 3.5 Mini Instruct",
+    "hf_id": "microsoft/Phi-3.5-mini-instruct",
+    "vram_gb": 7.0,
+    "context": "128000",
+    "category": "SLM",
+    "badge": "128K Ctx",
+    "description": "Microsoft's 3.8B parameter model featuring a massive 128K token context window and strong reasoning efficiency."
+  }
+];
 
 export function Home({ sseData, onSelectModel }) {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('ALL');
 
-  const liveModels = catalogModels.map(m => {
+  const liveModels = DEFAULT_CATALOG.map(m => {
     let status = 'IDLE';
     const isLoaded = sseData?.loaded_models?.some(lm => lm.model_id === m.id);
     if (isLoaded) {
@@ -48,18 +80,18 @@ export function Home({ sseData, onSelectModel }) {
           fontWeight: 700,
           marginBottom: '20px'
         }}>
-          <Sparkles size={14} /> Powered by Free Colab T4 & Cloudflare Quick Tunnels
+          <Sparkles size={14} /> Powered by Kaggle T4x2 Dual GPUs (30 GB VRAM) & Cloudflare Tunnels
         </div>
 
         <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: '1.15', marginBottom: '16px' }}>
-          On-Demand AI Model Hosting <br />
+          On-Demand 7B Model Hosting <br />
           <span style={{ background: 'linear-gradient(135deg, #7c3aed, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             Instant OpenAI-Compatible Endpoints
           </span>
         </h1>
 
         <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', maxWidth: '680px', margin: '0 auto 36px', lineHeight: '1.6' }}>
-          Deploy & run Small Language Models (SLMs) on free T4 GPUs. Dynamic VRAM packing allows multiple models to run side-by-side mid-session.
+          Deploy & run 7B Large-Parameter Models (Qwen 2.5 7B, DeepSeek R1 7B, Phi 3.5 Mini) on Kaggle T4x2 dual GPUs with multi-user vLLM continuous batching and 200GB dataset caching.
         </p>
 
         {/* Search & Category Filter */}
@@ -68,7 +100,7 @@ export function Home({ sseData, onSelectModel }) {
             <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
-              placeholder="Search SLMs by name or task..."
+              placeholder="Search models by name or task..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
