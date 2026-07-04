@@ -1,4 +1,4 @@
-import catalogModels from '../../catalog/models.json' assert { type: 'json' };
+import catalogModels from '../../catalog/models.json' with { type: 'json' };
 import { getColabState, getLoadedModels } from '../db.js';
 
 export function handleModelRoutes(app) {

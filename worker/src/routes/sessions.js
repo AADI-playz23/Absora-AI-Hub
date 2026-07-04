@@ -1,4 +1,4 @@
-import catalogModels from '../../catalog/models.json' assert { type: 'json' };
+import catalogModels from '../../catalog/models.json' with { type: 'json' };
 import { verifyJWT } from '../jwt.js';
 import { getColabState, getLoadedModels, createSession, getActiveSessions } from '../db.js';
 import { triggerGitHubColabLaunch } from '../github.js';

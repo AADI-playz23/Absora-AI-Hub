@@ -1,7 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import crypto from 'crypto';
-import catalogModels from '../catalog/models.json' assert { type: 'json' };
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const catalogModels = require('../catalog/models.json');
 
 const app = express();
 app.use(cors());
