@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Cpu, Layers, Zap, Loader2, Play } from 'lucide-react';
+import { ArrowLeft, Loader2, Play } from 'lucide-react';
 import { requestSession, fetchMySessions } from '../lib/api.js';
 import { SessionPanel } from '../components/SessionPanel.jsx';
 import { QueuePanel } from '../components/QueuePanel.jsx';
@@ -10,7 +10,6 @@ export function ModelDetail({ model, user, token, onBack, onAuthRequired }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Check if user already has an active session for this model
   useEffect(() => {
     if (!token) return;
     fetchMySessions(token)
@@ -80,7 +79,7 @@ export function ModelDetail({ model, user, token, onBack, onAuthRequired }) {
               style={{ padding: '14px 28px', fontSize: '1.05rem' }}
             >
               {loading ? <Loader2 size={20} className="animate-spin" /> : <Play size={20} />}
-              <span>{loading ? 'Booting Model...' : 'Launch On-Demand Endpoint'}</span>
+              <span>{loading ? 'Booting Model...' : 'Launch Endpoint'}</span>
             </button>
           )}
         </div>
@@ -100,7 +99,7 @@ export function ModelDetail({ model, user, token, onBack, onAuthRequired }) {
           </div>
           <div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Required VRAM</div>
-            <div style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-primary)' }}>{model.vram_gb} GB (T4 FP16)</div>
+            <div style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-primary)' }}>{model.vram_gb} GB VRAM</div>
           </div>
           <div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Context Length</div>
@@ -108,7 +107,7 @@ export function ModelDetail({ model, user, token, onBack, onAuthRequired }) {
           </div>
           <div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Execution Backend</div>
-            <div style={{ fontSize: '0.92rem', fontWeight: 600, color: '#34d399' }}>vLLM + Kaggle T4x2 Dual GPU</div>
+            <div style={{ fontSize: '0.92rem', fontWeight: 600, color: '#34d399' }}>vLLM + Dual GPU Engine</div>
           </div>
         </div>
       </div>
@@ -137,20 +136,11 @@ export function ModelDetail({ model, user, token, onBack, onAuthRequired }) {
         <div className="glass-panel" style={{ padding: '32px', textAlign: 'center' }}>
           <Loader2 size={36} className="animate-spin" style={{ color: '#06b6d4', margin: '0 auto 16px' }} />
           <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
-            Worker Ready to Run on Colab T4
+            Inference Cluster Booting Up...
           </h3>
           <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', maxWidth: '560px', margin: '0 auto 20px', lineHeight: '1.6' }}>
-            Click the button below to open the single-cell worker directly in Colab. No account credentials or setup required! Run the cell once to activate your live endpoint.
+            GPU inference cluster hardware is spinning up. Endpoint will transition to ACTIVE state automatically.
           </p>
-          <a
-            href={session.colab_url || "https://colab.research.google.com/github/AADI-playz23/Absora-AI-Hub/blob/main/notebooks/vllm_orchestrator.ipynb"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary"
-            style={{ padding: '12px 24px', fontSize: '1rem', textDecoration: 'none', display: 'inline-flex', gap: '8px' }}
-          >
-            <Zap size={18} /> Open & Run Worker in Google Colab (One Click)
-          </a>
         </div>
       )}
 

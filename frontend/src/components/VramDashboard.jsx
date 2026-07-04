@@ -20,7 +20,7 @@ export function VramDashboard({ vram, colabStatus, loadedModels = [] }) {
           </div>
           <div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Kaggle T4x2 Dual GPU Cluster (30 GB VRAM Pool)
+              Dual-GPU Inference Cluster (30 GB VRAM Pool)
             </div>
             <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               GPU VRAM & Physical Slot Allocation
@@ -58,7 +58,7 @@ export function VramDashboard({ vram, colabStatus, loadedModels = [] }) {
           padding: '14px'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            <span>T4 GPU Slot 0 (15 GB)</span>
+            <span>GPU Slot 0 (15 GB)</span>
             <span style={{ color: gpu0Model ? '#a78bfa' : '#34d399' }}>
               {gpu0Model ? `${gpu0Model.model_id} (14 GB)` : '15 GB Free'}
             </span>
@@ -82,7 +82,7 @@ export function VramDashboard({ vram, colabStatus, loadedModels = [] }) {
           padding: '14px'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            <span>T4 GPU Slot 1 (15 GB)</span>
+            <span>GPU Slot 1 (15 GB)</span>
             <span style={{ color: gpu1Model ? '#a78bfa' : '#34d399' }}>
               {gpu1Model ? `${gpu1Model.model_id} (14 GB)` : '15 GB Free'}
             </span>
@@ -103,7 +103,7 @@ export function VramDashboard({ vram, colabStatus, loadedModels = [] }) {
       {/* Active Model Chips */}
       <div style={{ display: 'flex', gap: '10px', marginTop: '16px', flexWrap: 'wrap' }}>
         {loadedModels.length === 0 ? (
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>No models currently loaded. Click 'Launch Session' to spin up Kaggle T4x2 hardware.</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>No models currently loaded. Click 'Launch Session' to spin up GPU hardware.</span>
         ) : (
           loadedModels.map((m, idx) => (
             <div key={m.model_id || idx} style={{

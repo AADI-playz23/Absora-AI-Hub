@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Key, Copy, Check, RefreshCw, Rocket, AlertTriangle, Terminal, Code, Cpu } from 'lucide-react';
+import { LayoutDashboard, Key, Copy, Check, RefreshCw, Rocket, AlertTriangle, Code, Cpu } from 'lucide-react';
 import { fetchMySessions, requestSession, regenerateApiKey } from '../lib/api.js';
 
 export function Dashboard({ user, token, onSelectModel, onAuthRequired }) {
@@ -44,7 +44,7 @@ export function Dashboard({ user, token, onSelectModel, onAuthRequired }) {
       const res = await requestSession('qwen2.5-7b', token);
       if (res.api_key) setUserApiKey(res.api_key);
       await loadSessions();
-      alert(res.message || 'Launch initiated! Kaggle T4x2 cluster starting up...');
+      alert(res.message || 'Launch initiated! Cluster starting up...');
     } catch (err) {
       alert('Launch failed: ' + err.message);
     } finally {
@@ -87,7 +87,7 @@ export function Dashboard({ user, token, onSelectModel, onAuthRequired }) {
             <LayoutDashboard size={26} style={{ color: '#7c3aed' }} /> Developer Dashboard & APIs
           </h1>
           <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            Manage your API key, live model endpoints, and Kaggle T4x2 cluster state.
+            Manage your API key, live model endpoints, and GPU cluster state.
           </p>
         </div>
 
@@ -160,7 +160,7 @@ export function Dashboard({ user, token, onSelectModel, onAuthRequired }) {
                     Models are currently IDLE. Please click 'Launch Session' to use them
                   </h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                    Kaggle T4x2 GPU cluster is offline to conserve weekly quota. Click launch to boot vLLM serving.
+                    GPU inference cluster is offline. Click launch session to boot high-performance inference engine.
                   </p>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export function Dashboard({ user, token, onSelectModel, onAuthRequired }) {
                 className="btn-primary"
                 style={{ fontSize: '0.9rem', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}
               >
-                <Rocket size={16} /> {launching ? 'Launching Kaggle T4x2...' : 'Launch Session'}
+                <Rocket size={16} /> {launching ? 'Launching Cluster...' : 'Launch Session'}
               </button>
             </div>
           )}
@@ -180,10 +180,10 @@ export function Dashboard({ user, token, onSelectModel, onAuthRequired }) {
           {colabStatus === 'STARTING' && (
             <div className="glass-panel" style={{ padding: '20px', background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)' }}>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fde047', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <RefreshCw className="spin" size={18} /> Kaggle T4x2 Cluster Booting...
+                <RefreshCw className="spin" size={18} /> GPU Cluster Booting...
               </h3>
               <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                GitHub Actions dispatched Kaggle kernel execution. Endpoint will be ACTIVE in 1-2 minutes.
+                Inference cluster execution initiated. Endpoint will be ACTIVE in 1-2 minutes.
               </p>
             </div>
           )}
@@ -191,10 +191,10 @@ export function Dashboard({ user, token, onSelectModel, onAuthRequired }) {
           {colabStatus === 'ACTIVE' && (
             <div className="glass-panel" style={{ padding: '20px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#86efac', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="pulse-green" /> Kaggle T4x2 GPU Cluster is ACTIVE
+                <span className="pulse-green" /> GPU Cluster is ACTIVE
               </h3>
               <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                vLLM multi-user serving engine is live on port 8000. Send API calls below.
+                High-throughput continuous batching inference engine is live. Send API calls below.
               </p>
             </div>
           )}
@@ -377,10 +377,10 @@ print(response.choices[0].message.content)`}
                 No Active Sessions
               </h3>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>
-                Launch a session to spin up the Kaggle T4x2 GPU cluster.
+                Launch a session to spin up the GPU cluster.
               </p>
               <button onClick={handleLaunchSession} disabled={launching} className="btn-primary">
-                <Rocket size={16} /> Launch Kaggle T4x2 Session
+                <Rocket size={16} /> Launch Session
               </button>
             </div>
           ) : (
@@ -408,7 +408,7 @@ print(response.choices[0].message.content)`}
                         Cluster Hardware
                       </div>
                       <div style={{ fontSize: '1rem', fontWeight: 700, color: '#a78bfa' }}>
-                        Kaggle Dual T4 (30GB VRAM)
+                        Dual GPU Acceleration (30GB VRAM)
                       </div>
                     </div>
                   </div>

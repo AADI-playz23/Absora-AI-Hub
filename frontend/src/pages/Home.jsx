@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Sparkles, Server, Cpu } from 'lucide-react';
+import { Search, Sparkles, Server } from 'lucide-react';
 import { VramDashboard } from '../components/VramDashboard.jsx';
 import { ModelCard } from '../components/ModelCard.jsx';
 
@@ -80,18 +80,18 @@ export function Home({ sseData, onSelectModel }) {
           fontWeight: 700,
           marginBottom: '20px'
         }}>
-          <Sparkles size={14} /> Powered by Kaggle T4x2 Dual GPUs (30 GB VRAM) & Cloudflare Tunnels
+          <Sparkles size={14} /> High-Performance GPU Inference Engine
         </div>
 
         <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: '1.15', marginBottom: '16px' }}>
-          On-Demand 7B Model Hosting <br />
+          Absora AI Hub <br />
           <span style={{ background: 'linear-gradient(135deg, #7c3aed, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             Instant OpenAI-Compatible Endpoints
           </span>
         </h1>
 
         <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', maxWidth: '680px', margin: '0 auto 36px', lineHeight: '1.6' }}>
-          Deploy & run 7B Large-Parameter Models (Qwen 2.5 7B, DeepSeek R1 7B, Phi 3.5 Mini) on Kaggle T4x2 dual GPUs with multi-user vLLM continuous batching and 200GB dataset caching.
+          Deploy and access state-of-the-art open models with high-throughput continuous batching, dual GPU acceleration, and unified API keys.
         </p>
 
         {/* Search & Category Filter */}
