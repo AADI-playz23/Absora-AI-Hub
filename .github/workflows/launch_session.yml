@@ -1,4 +1,4 @@
-name: Absora Colab T4 Session Launcher
+name: Absora Kaggle T4x2 GPU Session Launcher
 
 on:
   workflow_dispatch:
@@ -6,25 +6,26 @@ on:
       session_id:
         description: 'Unique Session ID'
         required: true
-        default: 'colab-t4-session'
+        default: 'kaggle-t4x2-session'
       model_id:
         description: 'Target Model ID'
         required: true
-        default: 'qwen2.5-1.5b'
+        default: 'qwen2.5-7b'
       hf_id:
         description: 'HuggingFace Model Path'
         required: true
-        default: 'Qwen/Qwen2.5-1.5B-Instruct'
+        default: 'Qwen/Qwen2.5-7B-Instruct'
       vram_gb:
         description: 'VRAM requirement in GB'
         required: true
-        default: '3.0'
+        default: '14.0'
       webhook_url:
-        description: 'Cloudflare Worker Webhook URL'
+        description: 'Vercel / Cloudflare Worker Webhook URL'
         required: true
+        default: 'https://absora-ai-hub.vercel.app/api/webhook'
 
 jobs:
-  launch-colab:
+  launch-kaggle:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,24 +36,24 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Selenium & Automation Tools
+      - name: Install Kaggle API & Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install selenium webdriver-manager requests colab-xterm
+          pip install kaggle requests
 
-      - name: Launch Colab T4 Worker via Selenium
+      - name: Launch Kaggle T4x2 GPU Kernel
         env:
-          COLAB_EMAIL: ${{ secrets.COLAB_EMAIL }}
-          COLAB_PASS: ${{ secrets.COLAB_PASS }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'aadiplayz23' }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY || 'bb278d87c316904717bfc8673419311f' }}
           SESSION_ID: ${{ github.event.inputs.session_id }}
           MODEL_ID: ${{ github.event.inputs.model_id }}
           HF_ID: ${{ github.event.inputs.hf_id }}
           VRAM_GB: ${{ github.event.inputs.vram_gb }}
           WEBHOOK_URL: ${{ github.event.inputs.webhook_url }}
         run: |
-          python scripts/launch_colab.py
+          python scripts/launch_kaggle.py
 
-      - name: Keep-Alive Runner (Colab 2-Hour Window)
+      - name: Keep-Alive Runner Monitor
         run: |
-          echo "Keeping GitHub Actions runner active for session execution window..."
-          sleep 7200 || true
+          echo "GitHub Actions monitoring Kaggle cluster execution session window..."
+          sleep 1800 || true

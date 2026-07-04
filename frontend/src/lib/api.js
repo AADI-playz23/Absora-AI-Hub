@@ -57,3 +57,15 @@ export async function fetchMySessions(token) {
   if (!res.ok) throw new Error('Failed to fetch active sessions');
   return res.json();
 }
+
+export async function regenerateApiKey(token) {
+  const res = await fetch(`${API_BASE}/auth/api-key/regenerate`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to regenerate API key');
+  return data;
+}

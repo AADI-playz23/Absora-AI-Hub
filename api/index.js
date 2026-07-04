@@ -133,7 +133,7 @@ app.post('/api/sessions/request', authMiddleware, (req, res) => {
   const apiKey = 'sk-absora-' + crypto.randomBytes(12).toString('hex');
   const colabLink = `https://colab.research.google.com/github/AADI-playz23/Absora-AI-Hub/blob/main/notebooks/vllm_orchestrator.ipynb`;
 
-  const host = req.headers.host || 'absora.vercel.app';
+  const host = req.headers.host || 'absora-ai-hub.vercel.app';
   const proxyEndpoint = `https://${host}/api/v1/chat/completions`;
 
   // Active worker exists
@@ -187,7 +187,7 @@ app.post('/api/sessions/request', authMiddleware, (req, res) => {
 
 app.get('/api/sessions/mine', authMiddleware, (req, res) => {
   const now = Math.floor(Date.now() / 1000);
-  const host = req.headers.host || 'absora.vercel.app';
+  const host = req.headers.host || 'absora-ai-hub.vercel.app';
   const proxyEndpoint = `https://${host}/api/v1/chat/completions`;
 
   const userSessions = globalState.sessions
