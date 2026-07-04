@@ -427,8 +427,16 @@ app.post('/api/webhook/status', (req, res) => {
   if (data.allocated_vram_gb !== undefined) globalState.vram_used_gb = data.allocated_vram_gb;
   if (data.free_vram_gb !== undefined) globalState.vram_free_gb = data.free_vram_gb;
   if (data.tunnel_url) globalState.tunnel_url = data.tunnel_url;
-  if (Array.isArray(data.loaded_models)) {
-    globalState.loaded_models = data.loaded_models;
+
+  const rawModels = data.models || data.loaded_models;
+  if (Array.isArray(rawModels)) {
+    globalState.loaded_models = rawModels.map(m => ({
+      model_id: m.model_id || m.id,
+      hf_id: m.hf_id || 'auto',
+      vram_gb: m.vram_gb || (m.gpu_slot === 0 ? 5.0 : 8.0),
+      gpu: m.gpu !== undefined ? m.gpu : m.gpu_slot,
+      healthy: m.healthy !== undefined ? m.healthy : true
+    }));
   }
   res.json({ success: true });
 });
