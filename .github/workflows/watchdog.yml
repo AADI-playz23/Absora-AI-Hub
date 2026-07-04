@@ -1,0 +1,34 @@
+name: Absora n8n Watchdog & Cluster Health Monitor
+
+on:
+  schedule:
+    # Run watchdog health check every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      force_ping:
+        description: 'Force immediate health ping'
+        required: false
+        default: 'true'
+
+jobs:
+  watchdog:
+    name: Run Watchdog Health Monitor
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run n8n Watchdog Script
+        env:
+          VERCEL_APP_URL: 'https://absora-ai-hub.vercel.app'
+          ABSORA_SECRET_KEY: ${{ secrets.ABSORA_SECRET_KEY || 'absora-secret-key-2026' }}
+          N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
+        run: |
+          node scripts/watchdog.js

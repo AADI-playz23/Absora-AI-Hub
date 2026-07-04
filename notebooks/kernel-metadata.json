@@ -1,0 +1,14 @@
+{
+  "id": "aadiplayz23/absora-vllm-orchestrator",
+  "title": "Absora vLLM Orchestrator",
+  "code_file": "vllm_orchestrator.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": []
+}
